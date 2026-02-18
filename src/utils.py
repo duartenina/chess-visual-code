@@ -1,0 +1,2 @@
+# BASE13_TO_CHESS = "0PpNnBbRrQqKk"
+BASE13_TO_CHESS = "0kKqQrRbBnNpP"
