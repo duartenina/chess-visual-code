@@ -1,4 +1,3 @@
-import re
 import numpy as np
 import chess
 from chess.pgn import read_game, Game
@@ -17,22 +16,16 @@ def move_to_str(board: chess.Board, move: chess.Move) -> str:
     return move_used_str
 
 
-def moves_str_to_fen(moves: str) -> str:
-    def fix_empty_places(row: str) -> str:
-        row = re.sub("0+", lambda m: str(len(m.group())), row)
-        return row
-
-    temp = np.base_repr(int(moves), 13)[:64]
-    temp = temp.ljust(64, "0")
+def moves_str_to_code(moves: str) -> str:
+    temp = np.base_repr(int(moves), 13)
     for n, char_new in enumerate(BASE13_TO_CHESS):
         char_old = np.base_repr(n, 13)
         temp = temp.replace(char_old, char_new)
-    rows = [fix_empty_places(temp[i : i + 8]) for i in range(0, 64, 8)]
 
-    return "/".join(rows)
+    return temp
 
 
-def convert_game_to_fen(game: Game) -> str:
+def convert_game_to_code(game: Game) -> str:
     board = game.board()
 
     moves_played_str = ""
@@ -42,13 +35,13 @@ def convert_game_to_fen(game: Game) -> str:
         moves_played_str += move_used_str
         board.push(move)
 
-    return moves_str_to_fen(moves_played_str)
+    return moves_str_to_code(moves_played_str)
 
 
-def convert_pgn_file_to_fen(filename: str) -> str:
+def convert_pgn_file_to_code(filename: str) -> str:
     game = read_game(open(filename))
 
     if game is None:
         exit()
 
-    return convert_game_to_fen(game)
+    return convert_game_to_code(game)
