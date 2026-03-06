@@ -1,5 +1,5 @@
 from IPython.display import display
-from src.create import convert_pgn_file_to_code
+from src.encode import convert_pgn_file_to_code
 from src.draw import draw_code
 
 
