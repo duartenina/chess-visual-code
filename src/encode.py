@@ -1,29 +1,62 @@
-import numpy as np
-from math import log, ceil
 import chess
-from chess.pgn import read_game, Game
-from .utils import BASE13_TO_CHESS, get_ordered_moves
+import numpy as np
+from chess.pgn import Game, read_game
+
+from .utils import (
+    BASE_PIECES,
+    NUM_CHARS_FOR_ZEROS,
+    convert_num_in_base_to_pieces,
+    count_zeros_at_start,
+    get_ordered_moves_and_digits,
+)
+
+
+class InvalidMoveException(Exception):
+    pass
 
 
 def move_to_str(board: chess.Board, move: chess.Move) -> str:
-    all_moves = get_ordered_moves(board)
-    num_all_moves = len(all_moves)
-    move_used = all_moves.index(move)
+    """Coverts a move in a board to its index. The number of digits in the output
+    depends on the total number of moves available, i.e. up to 10 moves available
+    output has 1 digit; 11 to 100 moves it has 2 digits, etc.
 
-    n_base13_digits = int(ceil(log(num_all_moves) / log(13)))
+    :param board: a chess.Board instance representing the current state of the game
+    :param move: the next move to be played
+    :return: a string representation of the move index
+    :raises InvalidMoveException: if the move is not one of the available moves
+    """
 
-    move_used_str = f"{move_used:0{n_base13_digits}d}"
+    all_moves, n_digits = get_ordered_moves_and_digits(board)
+
+    try:
+        move_ind = all_moves.index(move)
+    except ValueError:
+        raise InvalidMoveException(f"Invalid move: {move}")
+
+    move_used_str = f"{move_ind:>0{n_digits}d}"
 
     return move_used_str
 
 
 def moves_str_to_code(moves: str) -> str:
-    temp = np.base_repr(int(moves), 13)
-    for n, char_new in enumerate(BASE13_TO_CHESS):
-        char_old = np.base_repr(n, 13)
-        temp = temp.replace(char_old, char_new)
+    """
+    Converts a string
 
-    return temp
+    :param moves:
+    :return:
+    """
+
+    # A game with 14 0-index plies in a row ends in a draw by 3-move repetition
+    # code: '0'*28 ('0000000000000000000000000000')
+    # game: 1. a3 a5 2. Ra2 a4 3. Ra1 Ra5 4. Ra2 Ra6 5. Ra1 Ra5 6. Ra2 Ra6 7. Ra1 Ra5
+    # so we can safely cap the zeros to two digits (13**2)
+    num_zeros = min(count_zeros_at_start(moves), BASE_PIECES**NUM_CHARS_FOR_ZEROS)
+
+    num_zeros_base = f"{np.base_repr(num_zeros, BASE_PIECES):<02s}"
+    code_base = np.base_repr(int(moves), BASE_PIECES)
+    temp = num_zeros_base + code_base
+
+    return convert_num_in_base_to_pieces(temp)
 
 
 def convert_game_to_code(game: Game) -> str:
@@ -33,10 +66,20 @@ def convert_game_to_code(game: Game) -> str:
 
     for move in game.mainline_moves():
         move_used_str = move_to_str(board, move)
+        # print(move_used_str)
         moves_played_str += move_used_str
         board.push(move)
 
     return moves_str_to_code(moves_played_str)
+
+
+def read_pgn_file(filename: str) -> Game:
+    game = read_game(open(filename))
+
+    if game is None:
+        exit()
+
+    return game
 
 
 def convert_pgn_file_to_code(filename: str) -> str:

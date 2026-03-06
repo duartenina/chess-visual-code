@@ -1,5 +1,6 @@
 import drawsvg as dw
 import numpy as np
+
 from .utils import index_to_coord
 
 SQUARE_COLORS = ["#a67b5a", "#6b3912"]
@@ -68,7 +69,6 @@ def draw_svg(size: float) -> dw.Drawing:
 
 def draw_code(code: str, square_size: float = 30) -> dw.Drawing:
     n = int(np.ceil(np.sqrt(len(code))))
-    print(n)
     size = square_size * n
 
     svg = draw_svg(size)
