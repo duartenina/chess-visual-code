@@ -1,4 +1,5 @@
 import numpy as np
+import chess
 
 # BASE13_TO_CHESS = "0PpNnBbRrQqKk"
 BASE13_TO_CHESS = "0kKqQrRbBnNpP"
@@ -10,3 +11,9 @@ def index_to_coord(ind: int) -> tuple[int, int]:
     y = min(sql, sql**2 - ind)
 
     return x, y
+
+
+def get_ordered_moves(board: chess.Board) -> list[chess.Move]:
+    all_moves = sorted(board.legal_moves, key=chess.Move.uci)
+
+    return all_moves

@@ -1,15 +1,16 @@
 import numpy as np
+from math import log, ceil
 import chess
 from chess.pgn import read_game, Game
-from .utils import BASE13_TO_CHESS
+from .utils import BASE13_TO_CHESS, get_ordered_moves
 
 
 def move_to_str(board: chess.Board, move: chess.Move) -> str:
-    all_moves = sorted(board.legal_moves, key=chess.Move.uci)
+    all_moves = get_ordered_moves(board)
     num_all_moves = len(all_moves)
     move_used = all_moves.index(move)
 
-    n_base13_digits = int(np.ceil(np.log(num_all_moves) / np.log(13)))
+    n_base13_digits = int(ceil(log(num_all_moves) / log(13)))
 
     move_used_str = f"{move_used:0{n_base13_digits}d}"
 
