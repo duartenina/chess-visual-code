@@ -6,8 +6,8 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "chess>=1.11.2",
+    "drawsvg>=2.4.1",
     "numpy>=2.4.2",
-    "svg-py>=1.10.0",
 ]
 
 [dependency-groups]
