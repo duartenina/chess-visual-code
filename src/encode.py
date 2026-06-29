@@ -39,28 +39,29 @@ def move_to_str(board: chess.Board, move: chess.Move) -> str:
 
 
 def moves_str_to_code(moves: str) -> str:
-    """
-    Converts a string
+    """Converts a string containing move indexes into a string of pieces (the code)
 
-    :param moves:
-    :return:
+    :param moves: string representing the move indexes
+    :return: string of pieces (the code)
     """
 
-    # A game with 14 0-index plies in a row ends in a draw by 3-move repetition
-    # code: '0'*28 ('0000000000000000000000000000')
-    # game: 1. a3 a5 2. Ra2 a4 3. Ra1 Ra5 4. Ra2 Ra6 5. Ra1 Ra5 6. Ra2 Ra6 7. Ra1 Ra5
+    # A game with 22 0-index plies in a row ends in a draw by 3-move repetition
+    # code: '0'*44 ('00000000000000000000000000000000000000000000')
+    # game: 1. a3 a5 2. Ra2 a4 3. Ra1 Ra5 4. Ra2 Ra6 5. Ra1 Ra5 6. Ra2 Ra6
+    #       7. Ra1 Ra5 8. Ra2 Ra6 9. Ra1 Ra5 10. Ra2 Ra6 11. Ra1 Ra5
     # so we can safely cap the zeros to two digits (13**2)
     num_zeros = min(count_zeros_at_start(moves), BASE_PIECES**NUM_CHARS_FOR_ZEROS)
 
-    num_zeros_base = f"{np.base_repr(num_zeros, BASE_PIECES):<02s}"
+    num_zeros_base = f"{np.base_repr(num_zeros, BASE_PIECES):>02s}"
     code_base = np.base_repr(int(moves), BASE_PIECES)
 
     if code_base == "0":
         code_base = ""
 
     temp = num_zeros_base + code_base
+    code = convert_num_in_base_to_pieces(temp)
 
-    return convert_num_in_base_to_pieces(temp)
+    return code
 
 
 def convert_game_to_code(game: Game) -> str:
