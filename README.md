@@ -79,7 +79,7 @@ Available:
 
 Missing:
 
-* Scan: chessboard ➡️ code
+* Scan: chessboard ⇒ code
 
 ## Examples
 
