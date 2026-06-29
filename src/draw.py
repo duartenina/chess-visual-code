@@ -1,5 +1,8 @@
 import drawsvg as dw
 import numpy as np
+from chess import Board
+from chess.pgn import Game
+from chess.svg import board as draw_board
 
 from .utils import index_to_coord
 
@@ -76,3 +79,40 @@ def draw_code(code: str, square_size: float = 30) -> dw.Drawing:
     svg = draw_pieces(svg, code, square_size)
 
     return svg
+
+
+def draw_position(game: Game, ply: int = -1) -> str:
+    board = Board()
+    moves = list(game.mainline_moves())
+    if ply != -1:
+        if ply < -1:
+            ply += 1
+        moves = moves[:ply]
+
+    for m in moves:
+        board.push(m)
+
+    return draw_board(
+        board,
+        lastmove=moves[-1],
+        check=board.king(board.turn) if board.is_check() else None,
+    )
+
+
+def _save_svg_from_str(svg: str, filename: str) -> None:
+    with open(filename, "w") as f:
+        f.write(svg)
+
+
+def _save_svg_from_drawing(drawing: dw.Drawing, filename: str) -> None:
+    drawing.save_svg(filename)
+
+
+def save_svg(svg: str | dw.Drawing, filename: str) -> None:
+    if not filename.endswith(".svg"):
+        filename += ".svg"
+
+    if isinstance(svg, dw.Drawing):
+        _save_svg_from_drawing(svg, filename)
+    else:
+        _save_svg_from_str(svg, filename)
