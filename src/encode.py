@@ -54,6 +54,10 @@ def moves_str_to_code(moves: str) -> str:
 
     num_zeros_base = f"{np.base_repr(num_zeros, BASE_PIECES):<02s}"
     code_base = np.base_repr(int(moves), BASE_PIECES)
+
+    if code_base == "0":
+        code_base = ""
+
     temp = num_zeros_base + code_base
 
     return convert_num_in_base_to_pieces(temp)

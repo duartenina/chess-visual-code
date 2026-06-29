@@ -13,9 +13,11 @@ def code_to_moves_str(code: str) -> str:
     temp = convert_pieces_to_num_in_base(code)
     num_zeros = temp[:NUM_CHARS_FOR_ZEROS]
     temp = temp[NUM_CHARS_FOR_ZEROS:]
-    temp = "0" * int(num_zeros, BASE_PIECES) + str(int(temp, BASE_PIECES))
+    moves_str = "0" * int(num_zeros, BASE_PIECES)
+    if temp != "":
+        moves_str += str(int(temp, BASE_PIECES))
 
-    return temp
+    return moves_str
 
 
 def get_next_move(board: chess.Board, moves_str: str) -> tuple[chess.Move, str]:
