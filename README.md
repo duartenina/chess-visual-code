@@ -17,7 +17,7 @@ The objective of this project is to be able to pack an entire chess game (e.g., 
 There are two different problems to solve:
 
 1. How to encode the information
-2. How do diplay the code
+2. How to display the code
 
 ### 1. Encoding details
 
